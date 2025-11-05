@@ -61,6 +61,15 @@ module cpu_tb;
     reg [63:0] data_array;  // holds 8 bytes (8 × 8 bits)
     reg [7:0] current_byte;
 
+    wire next_data_strb_tb;
+    wire data_valid_strb_tb;
+    wire programm_o_tb;
+    wire fetch_instr_tb;
+    wire decode_tb;
+    wire fetcho_op_tb;
+    wire fetch_mdr_tb;
+    wire execute_tb;
+
     cpu #(
         .CRA_BIT_NUMB(CRA_BIT_NUMB),
         .OPERATION_CODE_WIDTH(OPERATION_CODE_WIDTH),
@@ -77,7 +86,18 @@ module cpu_tb;
         .reset_i(reset_tb),
 
         .in_pins_i(in_pins_tb),
+        .next_data_strb_o(next_data_strb_tb),
+
         .out_pins_o(out_pins_tb),
+        .data_valid_strb_o(data_valid_strb_tb),
+
+        // Status Flags
+        .programm_o(programm_o_tb),
+        .fetch_instr_o(fetch_instr_tb),
+        .decode_o(decode_tb),
+        .fetcho_op_o(fetcho_op_tb),
+        .fetch_mdr_o(fetch_mdr_tb),
+        .execute_o(execute_tb),
 
         .p_programm_i(p_programm_tb),
         .rx_i(rx_tb)

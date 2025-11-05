@@ -54,7 +54,17 @@ module control_unit #(
     input wire [REGISTER_WIDTH-1:0] p_data_i,
     input wire [MEMORY_ADDRESS_WIDTH-1:0] p_address_i,
     input wire p_write_en_mem_i,
-    output wire p_active_o
+    output wire p_active_o,
+
+    //Output to board pins
+    output wire programm_o,
+    output wire fetch_instr_o,
+    output wire decode_o,
+    output wire fetcho_op_o,
+    output wire fetch_mdr_o,
+    output wire execute_o,
+    output wire next_data_strb_o,
+    output wire data_valid_strb_o
 );
 
     // ###########################################################
@@ -88,6 +98,10 @@ module control_unit #(
 
     reg c_flag;
     reg next_c_flag;
+
+    // strb signal
+    reg data_valid_strb;
+    reg next_data_valid_strb;
 
     // instruction signals
     wire mdr_instr; // signals that this instruction uses the MDR and therefore the extra Fetch_MDR step is needed
@@ -400,6 +414,17 @@ module control_unit #(
     end
 
     // ###########################################################
+    // STRB SIGNAL
+    // ###########################################################
+    always @(data_valid_strb, cu_state, out_instr) begin
+        // standard assignment
+        next_data_valid_strb = 0;
+
+        if ((cu_state == stEXEC) && (out_instr == 1))
+            next_data_valid_strb = 1;
+    end
+
+    // ###########################################################
     //                SEQUENTIAL LOGIC (REGISTER)
     // ###########################################################
     always @(posedge clk_i or posedge reset_i) begin
@@ -408,11 +433,27 @@ module control_unit #(
             z_flag <= 0;
             programm_counter <= {MEMORY_ADDRESS_WIDTH{1'b0}};
             cu_state <= stRESET;
+            data_valid_strb <= 0;
         end else begin
             c_flag <= next_c_flag;
             z_flag <= next_z_flag;
             programm_counter <= next_programm_counter;
             cu_state <= next_cu_state;
+            data_valid_strb <= next_data_valid_strb;
         end
     end
+
+    // ###########################################################
+    //               OUTPUT TO BOARD PIN LOGIC
+    // ###########################################################
+    
+    assign programm_o = (cu_state == stPROGRAMM);
+    assign fetch_instr_o = (cu_state == stFETCH_I);
+    assign decode_o = (cu_state == stDECODE);
+    assign fetcho_op_o = (cu_state == stFETCH_O);
+    assign fetch_mdr_o = (cu_state == stFETCH_MDR);
+    assign execute_o = ((cu_state == stEXEC) || (cu_state == stEXEC_ALU));
+
+    assign next_data_strb_o = ((cu_state == stEXEC) && (in_instr == 1));
+    assign data_valid_strb_o = data_valid_strb;
 endmodule

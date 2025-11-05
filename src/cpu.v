@@ -15,9 +15,22 @@ module cpu #(
 
     // IN
     input wire [REGISTER_WIDTH - 1 : 0] in_pins_i,
+    output wire next_data_strb_o,
 
     // OUT
     output wire [REGISTER_WIDTH - 1 : 0] out_pins_o,
+    output wire data_valid_strb_o,
+
+    // INST REG
+    output wire [REGISTER_WIDTH - 1 : 0] instr_reg_o,
+
+    // Status Flags
+    output wire programm_o,
+    output wire fetch_instr_o,
+    output wire decode_o,
+    output wire fetcho_op_o,
+    output wire fetch_mdr_o,
+    output wire execute_o,
 
     // Programmer
     input wire p_programm_i,
@@ -90,6 +103,7 @@ module cpu #(
 
     assign out_pins_o = data_out_cpu;
     assign write_data_in_cpu = in_pins_i;
+    assign instr_reg_o = data_ir_cpu;
 
     // ###############################################
     //                   COMPONENTS
@@ -282,7 +296,17 @@ module cpu #(
         .p_data_i(p_data),
         .p_address_i(p_addr),
         .p_write_en_mem_i(p_enable_mem_write),
-        .p_active_o(p_active)
+        .p_active_o(p_active),
+
+        // Output to board pins
+        .programm_o(programm_o),
+        .fetch_instr_o(fetch_instr_o),
+        .decode_o(decode_o),
+        .fetcho_op_o(fetcho_op_o),
+        .fetch_mdr_o(fetch_mdr_o),
+        .execute_o(execute_o),
+        .next_data_strb_o(next_data_strb_o),
+        .data_valid_strb_o(data_valid_strb_o)
     );
 
     // -----------------------------------------------

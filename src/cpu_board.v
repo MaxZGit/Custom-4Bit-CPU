@@ -8,6 +8,9 @@ module tt_um_four_bit_cpu_top_level(
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
+    // ###############################################
+    //                  PARAMETERS
+    // ###############################################
     localparam OPERATION_CODE_WIDTH = 3;
     localparam CRA_BIT_NUMB = 4;
     localparam REGISTER_WIDTH = 4;
@@ -20,9 +23,10 @@ module tt_um_four_bit_cpu_top_level(
     localparam BAUD_COUNTS_PER_BIT = 521; // for 10MHz clk
     localparam BAUD_RATE_COUNTER_BITWIDTH = 10; //2^10 0 1024
 
-    assign uo_out[7:4] = 4'b0000;
-    assign uio_oe[7:0] = 8'b00000000;
-    assign uio_out[7:0] = 8'b00000000;
+    // ###############################################
+    //              CONNECTING SIGNALS
+    // ###############################################
+    assign uio_oe[7:0] = 8'b11111111; // all outputs
 
     wire ui_in_4_sync;
     wire ui_in_5_sync;
@@ -31,6 +35,10 @@ module tt_um_four_bit_cpu_top_level(
 
     wire ui_in_2_sync;
     wire ui_in_3_sync;
+
+    // ###############################################
+    // Synchronizers for input signals
+    // ###############################################
 
     input_synchronizer #(
         .REGISTER_COUNT(REGISTER_COUNT)
@@ -101,10 +109,28 @@ module tt_um_four_bit_cpu_top_level(
         .clk_i(clk),
         .reset_i(~rst_n),
 
+        // IN
         .in_pins_i({ui_in_7_sync, ui_in_6_sync, ui_in_5_sync, ui_in_4_sync}),
+        .next_data_strb_o(uio_out[0]),
+        // OUT
         .out_pins_o(uo_out[3:0]),
+        .data_valid_strb_o(uio_out[1]),
 
+        // INST REG
+        .instr_reg_o(uo_out[7:4]),
+        
+        // Status Flags
+        .programm_o(uio_out[2]),
+        .fetch_instr_o(uio_out[3]),
+        .decode_o(uio_out[4]),
+        .fetcho_op_o(uio_out[5]),
+        .fetch_mdr_o(uio_out[6]),
+        .execute_o(uio_out[7]),
+
+        // Programmer
         .p_programm_i(ui_in_2_sync),
+
+        // UART RX
         .rx_i(ui_in_3_sync)
     );
 endmodule
