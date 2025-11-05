@@ -33,10 +33,7 @@ module reg_memory #(
     localparam OUT_INSTR = 4'b1110;
     localparam LDI_INSTR = 4'b1111;
 
-    //integer i;
-
     reg [REGISTER_WIDTH-1:0] reg_vals [0:MEMORY_REGISTERS-1];
-    //reg [REGISTER_WIDTH-1:0] next_reg_vals [0:MEMORY_REGISTERS-1];
 
     // ----------------------------
     // Combinational next-state logic
@@ -71,50 +68,4 @@ module reg_memory #(
         else
             data_o = 0;
     end
-    
-
-    /*  
-    always @(*) begin
-        // default: hold previous values
-        for (i = 0; i < MEMORY_REGISTERS; i = i + 1) begin
-            next_reg_vals[i] = reg_vals[i];
-        end
-
-        // default output
-        data_o = {REGISTER_WIDTH{1'b0}};
-
-        // write path
-        if (write_en_i)
-            next_reg_vals[addr_i] = data_i;
-
-        // read path (synchronous read emulation)
-        if (read_en_i)
-            data_o = reg_vals[addr_i];
-    end
-
-    always @(posedge clk_i or posedge reset_i) begin
-        if (reset_i) begin
-            reg_vals[0]  <= OUT_INSTR; 
-            reg_vals[1]  <= INC_INSTR;
-            reg_vals[2]  <= JMP_INSTR; 
-            reg_vals[3]  <= 4'b0000;
-            reg_vals[4]  <= NOP_INSTR; 
-            reg_vals[5]  <= NOP_INSTR; 
-            reg_vals[6]  <= NOP_INSTR; 
-            reg_vals[7]  <= NOP_INSTR;
-            reg_vals[8]  <= NOP_INSTR; 
-            reg_vals[9]  <= NOP_INSTR; 
-            reg_vals[10] <= NOP_INSTR; 
-            reg_vals[11] <= NOP_INSTR; 
-            reg_vals[12] <= NOP_INSTR; 
-            reg_vals[13] <= NOP_INSTR; 
-            reg_vals[14] <= NOP_INSTR; 
-            reg_vals[15] <= NOP_INSTR;           
-        end else begin 
-            for (i = 0; i < MEMORY_REGISTERS; i = i + 1) begin
-                reg_vals[i] <= next_reg_vals[i];
-            end
-        end
-    end
-    */
 endmodule
