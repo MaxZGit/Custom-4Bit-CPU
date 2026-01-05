@@ -6,14 +6,19 @@ module control_unit #(
 ) (
     input wire clk_i,
     input wire reset_i,
-    
-    // MEMORY
+
+    // ---------------------------------------------
+    // MEMORY Interface
+    // ---------------------------------------------
     output reg read_en_mem_o,
     output reg write_en_mem_o,
     output reg [MEMORY_ADDRESS_WIDTH-1:0] addr_mem_o,
     output reg [REGISTER_WIDTH-1:0] write_data_mem_o,
     input wire [REGISTER_WIDTH-1:0] read_data_mem_i,
 
+    // ---------------------------------------------
+    // Register Interface
+    // ---------------------------------------------
     // INSTRUCTION REG.
     output reg write_en_ir_o,
     output reg [REGISTER_WIDTH-1:0] write_data_ir_o,
@@ -34,13 +39,23 @@ module control_unit #(
     output reg [REGISTER_WIDTH-1:0] write_data_opnd_o,
     input wire [REGISTER_WIDTH-1:0] data_opnd_i,
 
+    // ---------------------------------------------
+    // I/O REG Interface
+    // ---------------------------------------------
+
     // IN REG.
     output reg write_en_in_o,
     input wire [REGISTER_WIDTH-1:0] data_in_i,
+    output wire next_data_strb_o,
 
     // OUT REG.
     output reg write_en_out_o,
     output reg [REGISTER_WIDTH-1:0] write_data_out_o,
+    output wire data_valid_strb_o,
+
+    // ---------------------------------------------
+    // ALU Interface
+    // ---------------------------------------------
 
     // ALU
     output reg [OPERATION_CODE_WIDTH-1:0] oc_o,
@@ -49,22 +64,24 @@ module control_unit #(
     input wire [CRA_BIT_NUMB-1:0] result_alu_i,
     input wire carry_alu_i,
 
-    // Boot Loader
+    // ---------------------------------------------
+    // Programmer Interface
+    // ---------------------------------------------
     input wire p_programm_i,
     input wire [REGISTER_WIDTH-1:0] p_data_i,
     input wire [MEMORY_ADDRESS_WIDTH-1:0] p_address_i,
     input wire p_write_en_mem_i,
     output wire p_active_o,
 
-    //Output to board pins
+    // ---------------------------------------------
+    // Debug Output Interface
+    // ---------------------------------------------
     output wire programm_o,
     output wire fetch_instr_o,
     output wire decode_o,
     output wire fetcho_op_o,
     output wire fetch_mdr_o,
-    output wire execute_o,
-    output wire next_data_strb_o,
-    output wire data_valid_strb_o
+    output wire execute_o
 );
 
     // ###########################################################

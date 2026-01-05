@@ -42,7 +42,7 @@ module programmer #(
     //                COMBINATORIAL LOGIC (REGISTER)
     // ###########################################################
 
-    // load data into input register at valid strobe
+    // load data into register at valid strobe
     always @(data_valid_strb_i, rx_input, uart_data_i) begin
         //default assignment
         next_rx_input = rx_input;
