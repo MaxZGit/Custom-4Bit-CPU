@@ -1,5 +1,9 @@
 `timescale 1ns/1ps
 
+`include "src/half_adder.v"
+`include "src/full_adder.v"
+`include "src/carry_ripple_adder.v"
+
 module carry_ripple_adder_tb;
     
     localparam CRA_BIT_NUMB = 4;
@@ -22,10 +26,10 @@ module carry_ripple_adder_tb;
 
     initial begin
 
-		$dumpfile("counter_tb.vcd");
+		$dumpfile("sim/carry_ripple_adder_tb.vcd");
 		$dumpvars;
         
-        $display("a | b | carry_in | sum | carry");
+        $display("  a  |   b  | carry_in|  sum   | carry_out");
         $display("---------------------------------------------------");
         // Test vector 1
         a_tb = 4'b0001; b_tb = 4'b0010; carry_in_tb = 1'b0; #10;
@@ -42,6 +46,7 @@ module carry_ripple_adder_tb;
         // Test vector 4
         a_tb = 4'b1111; b_tb = 4'b1111; carry_in_tb = 1'b1; #10;
         $display("%b | %b |    %b    |  %b  |    %b", a_tb, b_tb, carry_in_tb, sum_tb, carry_tb); #5
+        $display("---------------------------------------------------");
 
         repeat (5) begin
             a_tb = $random;
