@@ -4,7 +4,6 @@ module full_adder(
     input wire b_i,
     input wire carry_i,
     // outputs
-
     output wire sum_o,
     output wire carry_o
 );

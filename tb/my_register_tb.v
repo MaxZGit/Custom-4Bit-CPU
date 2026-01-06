@@ -36,7 +36,7 @@ module my_register_tb;
         reset_tb = 1'b1; // reset
         #45;
         reset_tb = 0; //release reset
-        #10;
+        #12;
         write_en_tb = 1'b1;
         in_tb = 4'b1010;
         #10;
