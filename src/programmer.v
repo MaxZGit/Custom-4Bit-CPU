@@ -39,7 +39,7 @@ module programmer #(
     reg [MEMORY_ADDRESS_WIDTH-1:0] next_addr;
 
     // ###########################################################
-    //                COMBINATORIAL LOGIC (REGISTER)
+    //                COMBINATORIAL LOGIC 
     // ###########################################################
 
     // load data into register at valid strobe

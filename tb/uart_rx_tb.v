@@ -25,9 +25,7 @@ module uart_rx_tb;
     reg data_valid_strb;
 
     uart_rx #(
-        .UART_BAUD_RATE(UART_BAUD_RATE),
         .UART_DATA_LENGTH(UART_DATA_LENGTH),
-        .CLK_FREQ(CLK_FREQ),
         .RX_COUNTER_BITWIDTH(RX_COUNTER_BITWIDTH),
         .BAUD_COUNTS_PER_BIT(BAUD_COUNTS_PER_BIT),
         .BAUD_RATE_COUNTER_BITWIDTH(BAUD_RATE_COUNTER_BITWIDTH)

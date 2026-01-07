@@ -34,11 +34,11 @@ module alu_tb;
         $dumpfile("sim/alu_tb.vcd");
 		$dumpvars;
 
-        $display("a | b | oc | result | carry");
+        $display("  a  |   b  |     oc    | result | carry");
         $display("---------------------------------------------------");
 
         // ADD (MEM)
-        a_tb = 4'b0001; b_tb = 4'b0010; oc_tb = 3'b100; #10;
+        a_tb = 4'b0010; b_tb = 4'b1111; oc_tb = 3'b100; #10;
         $display("%b | %b |    %b    |  %b  |    %b", a_tb, b_tb, oc_tb, result_tb, carry_tb); #5;
 
         // ADD (1) !NOTE ADD (1) will still add a_tb + b_tb, the alu does not differentiate between ADD 1 and ADD a + b
@@ -54,15 +54,15 @@ module alu_tb;
         $display("%b | %b |    %b    |  %b  |    %b", a_tb, b_tb, oc_tb, result_tb, carry_tb); #5;
 
         // XOR
-        a_tb = 4'b0001; b_tb = 4'b0010; oc_tb = 3'b001; #10;
+        a_tb = 4'b1001; b_tb = 4'b1010; oc_tb = 3'b001; #10;
         $display("%b | %b |    %b    |  %b  |    %b", a_tb, b_tb, oc_tb, result_tb, carry_tb); #5;
 
         // AND
-        a_tb = 4'b0001; b_tb = 4'b0010; oc_tb = 3'b010; #10;
+        a_tb = 4'b1001; b_tb = 4'b1010; oc_tb = 3'b010; #10;
         $display("%b | %b |    %b    |  %b  |    %b", a_tb, b_tb, oc_tb, result_tb, carry_tb); #5;
 
         // OR
-        a_tb = 4'b0001; b_tb = 4'b0010; oc_tb = 3'b011; #10;
+        a_tb = 4'b1001; b_tb = 4'b1010; oc_tb = 3'b011; #10;
         $display("%b | %b |    %b    |  %b  |    %b", a_tb, b_tb, oc_tb, result_tb, carry_tb); #5;
 
     end
