@@ -264,9 +264,10 @@ module control_unit #(
     //               FSM active logic (and program counter logic)
     // ###########################################################
 
+    assign p_active_o = (cu_state == stPROGRAM);
+
     always @(*) begin
         // default assignments
-        p_active_o = 0;
 
         next_program_counter = program_counter;
 
@@ -302,7 +303,6 @@ module control_unit #(
         case (cu_state)
             stPROGRAM: begin
                 // connect boot loader to memory
-                p_active_o = 1;
                 write_en_mem_o = p_write_en_mem_i;
                 addr_mem_o = p_address_i;
                 write_data_mem_o = p_data_i;
