@@ -67,7 +67,7 @@ module control_unit #(
     // ---------------------------------------------
     // Programmer Interface
     // ---------------------------------------------
-    input wire p_programm_i,
+    input wire p_program_i,
     input wire [REGISTER_WIDTH-1:0] p_data_i,
     input wire [MEMORY_ADDRESS_WIDTH-1:0] p_address_i,
     input wire p_write_en_mem_i,
@@ -76,7 +76,7 @@ module control_unit #(
     // ---------------------------------------------
     // Debug Output Interface
     // ---------------------------------------------
-    output wire programm_o,
+    output wire program_o,
     output wire fetch_instr_o,
     output wire decode_o,
     output wire fetcho_op_o,
@@ -90,7 +90,7 @@ module control_unit #(
 
     // State Machine
     localparam stRESET     = 3'd0;
-    localparam stPROGRAMM  = 3'd1;
+    localparam stPROGRAM  = 3'd1;
     localparam stFETCH_I   = 3'd2;
     localparam stDECODE    = 3'd3;
     localparam stFETCH_O   = 3'd4;
@@ -101,9 +101,9 @@ module control_unit #(
     reg [2:0] cu_state;
     reg [2:0] next_cu_state;
 
-    // Programm Counter
-    reg [MEMORY_ADDRESS_WIDTH - 1:0] programm_counter;
-    reg [MEMORY_ADDRESS_WIDTH - 1:0] next_programm_counter;
+    // Program Counter
+    reg [MEMORY_ADDRESS_WIDTH - 1:0] program_counter;
+    reg [MEMORY_ADDRESS_WIDTH - 1:0] next_program_counter;
 
     // operation code
     wire [2:0] opcode;
@@ -198,15 +198,15 @@ module control_unit #(
 
         case (cu_state)
             stRESET: begin
-                if (p_programm_i)
-                    next_cu_state = stPROGRAMM;
+                if (p_program_i)
+                    next_cu_state = stPROGRAM;
                 else
                     next_cu_state = stFETCH_I;
             end
 
-            stPROGRAMM: begin
-                if (p_programm_i)
-                    next_cu_state = stPROGRAMM;
+            stPROGRAM: begin
+                if (p_program_i)
+                    next_cu_state = stPROGRAM;
                 else
                     next_cu_state = stFETCH_I;
             end
@@ -241,15 +241,15 @@ module control_unit #(
             end
 
             stEXEC_ALU: begin
-                if (p_programm_i)
-                    next_cu_state = stPROGRAMM;
+                if (p_program_i)
+                    next_cu_state = stPROGRAM;
                 else
                     next_cu_state = stFETCH_I;
             end
 
             stEXEC: begin
-                if (p_programm_i)
-                    next_cu_state = stPROGRAMM;
+                if (p_program_i)
+                    next_cu_state = stPROGRAM;
                 else
                     next_cu_state = stFETCH_I;
             end 
@@ -268,7 +268,7 @@ module control_unit #(
         // default assignments
         p_active_o = 0;
 
-        next_programm_counter = programm_counter;
+        next_program_counter = program_counter;
 
         read_en_mem_o = 0;
         write_en_mem_o = 0;
@@ -296,11 +296,11 @@ module control_unit #(
 
         // program counter logic
         if (cu_state == stFETCH_I || cu_state == stFETCH_O)
-            next_programm_counter = programm_counter + 1;
+            next_program_counter = program_counter + 1;
 
         // FSM behavior (action logic)
         case (cu_state)
-            stPROGRAMM: begin
+            stPROGRAM: begin
                 // connect boot loader to memory
                 p_active_o = 1;
                 write_en_mem_o = p_write_en_mem_i;
@@ -308,7 +308,7 @@ module control_unit #(
                 write_data_mem_o = p_data_i;
 
                 //reset state
-                next_programm_counter = {MEMORY_ADDRESS_WIDTH{1'b0}};
+                next_program_counter = {MEMORY_ADDRESS_WIDTH{1'b0}};
                 write_en_a_o = 1;
                 write_data_a_o = {REGISTER_WIDTH{1'b0}};
             end
@@ -319,7 +319,7 @@ module control_unit #(
                 // enable write for IR
                 write_en_ir_o = 1;
                 // set address
-                addr_mem_o = programm_counter;
+                addr_mem_o = program_counter;
                 // connect signals
                 write_data_ir_o = read_data_mem_i;
             end
@@ -330,7 +330,7 @@ module control_unit #(
                 // enable write for OPND
                 write_en_opnd_o = 1;
                 // set address
-                addr_mem_o = programm_counter;
+                addr_mem_o = program_counter;
                 // connect signals
                 write_data_opnd_o = read_data_mem_i;
             end
@@ -367,11 +367,11 @@ module control_unit #(
 
             stEXEC: begin
                 if (jmp_instr)
-                    next_programm_counter = data_opnd_i;
+                    next_program_counter = data_opnd_i;
                 else if (jz_instr && z_flag)
-                    next_programm_counter = data_opnd_i;
+                    next_program_counter = data_opnd_i;
                 else if (jc_instr && c_flag)
-                    next_programm_counter = data_opnd_i;
+                    next_program_counter = data_opnd_i;
                 else if (ld_instr) begin
                     // enable write on a reg
                     write_en_a_o = 1;
@@ -451,13 +451,13 @@ module control_unit #(
         if (reset_i) begin
             c_flag <= 0;
             z_flag <= 0;
-            programm_counter <= {MEMORY_ADDRESS_WIDTH{1'b0}};
+            program_counter <= {MEMORY_ADDRESS_WIDTH{1'b0}};
             cu_state <= stRESET;
             data_valid_strb <= 0;
         end else begin
             c_flag <= next_c_flag;
             z_flag <= next_z_flag;
-            programm_counter <= next_programm_counter;
+            program_counter <= next_program_counter;
             cu_state <= next_cu_state;
             data_valid_strb <= next_data_valid_strb;
         end
@@ -467,7 +467,7 @@ module control_unit #(
     //               OUTPUT TO BOARD PIN LOGIC
     // ###########################################################
     
-    assign programm_o = (cu_state == stPROGRAMM);
+    assign program_o = (cu_state == stPROGRAM);
     assign fetch_instr_o = (cu_state == stFETCH_I);
     assign decode_o = (cu_state == stDECODE);
     assign fetcho_op_o = (cu_state == stFETCH_O);

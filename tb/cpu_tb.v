@@ -55,7 +55,7 @@ module cpu_tb;
     reg [REGISTER_WIDTH - 1:0] in_pins_tb = 4'b0010;
     wire [REGISTER_WIDTH - 1:0] out_pins_tb;
 
-    reg p_programm_tb = 0;
+    reg p_program_tb = 0;
     reg rx_tb = 1;
 
     reg [63:0] data_array;  // holds 8 bytes (8 × 8 bits)
@@ -63,7 +63,7 @@ module cpu_tb;
 
     wire next_data_strb_tb;
     wire data_valid_strb_tb;
-    wire programm_o_tb;
+    wire program_o_tb;
     wire fetch_instr_tb;
     wire decode_tb;
     wire fetcho_op_tb;
@@ -92,14 +92,14 @@ module cpu_tb;
         .data_valid_strb_o(data_valid_strb_tb),
 
         // Status Flags
-        .programm_o(programm_o_tb),
+        .program_o(program_o_tb),
         .fetch_instr_o(fetch_instr_tb),
         .decode_o(decode_tb),
         .fetcho_op_o(fetcho_op_tb),
         .fetch_mdr_o(fetch_mdr_tb),
         .execute_o(execute_tb),
 
-        .p_programm_i(p_programm_tb),
+        .p_program_i(p_program_tb),
         .rx_i(rx_tb)
     );
 
@@ -143,7 +143,7 @@ module cpu_tb;
 
         #(1000*clk_pulse);
 
-        p_programm_tb = 1;
+        p_program_tb = 1;
         for (i = 7; i > 0; i = i - 1) begin
             current_byte = data_array[i*8+: 8];
             //start bit
@@ -161,7 +161,7 @@ module cpu_tb;
         end
         rx_tb = 1;
         #(5*clk_pulse);
-        p_programm_tb = 0;
+        p_program_tb = 0;
 
         #(1000*clk_pulse);
 

@@ -120,7 +120,7 @@ module tt_um_four_bit_cpu_top_level(
         .instr_reg_o(uo_out[7:4]),
         
         // Status Flags
-        .programm_o(uio_out[2]),
+        .program_o(uio_out[2]),
         .fetch_instr_o(uio_out[3]),
         .decode_o(uio_out[4]),
         .fetcho_op_o(uio_out[5]),
@@ -128,7 +128,7 @@ module tt_um_four_bit_cpu_top_level(
         .execute_o(uio_out[7]),
 
         // Programmer
-        .p_programm_i(ui_in_2_sync),
+        .p_program_i(ui_in_2_sync),
 
         // UART RX
         .rx_i(ui_in_3_sync)

@@ -25,7 +25,7 @@ module cpu #(
     output wire [REGISTER_WIDTH - 1 : 0] instr_reg_o,
 
     // Status Flags
-    output wire programm_o,
+    output wire program_o,
     output wire fetch_instr_o,
     output wire decode_o,
     output wire fetcho_op_o,
@@ -33,7 +33,7 @@ module cpu #(
     output wire execute_o,
 
     // Programmer
-    input wire p_programm_i,
+    input wire p_program_i,
 
     // UART RX
     input wire rx_i
@@ -292,14 +292,14 @@ module cpu #(
         .carry_alu_i(carry_alu_cpu),
 
         // Programmer
-        .p_programm_i(p_programm_i),
+        .p_program_i(p_program_i),
         .p_data_i(p_data),
         .p_address_i(p_addr),
         .p_write_en_mem_i(p_enable_mem_write),
         .p_active_o(p_active),
 
         // Output to board pins
-        .programm_o(programm_o),
+        .program_o(program_o),
         .fetch_instr_o(fetch_instr_o),
         .decode_o(decode_o),
         .fetcho_op_o(fetcho_op_o),
