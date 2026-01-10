@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Wed Nov  5 20:56:15 2025
+[*] Sat Jan 10 15:20:37 2026
 [*]
 [dumpfile] "/foss/designs/TinyTapeout_4Bit_CPU/sim/cpu_tb.vcd"
-[dumpfile_mtime] "Wed Nov  5 20:50:44 2025"
-[dumpfile_size] 2342055
+[dumpfile_mtime] "Sat Jan 10 15:20:08 2026"
+[dumpfile_size] 2628176
 [savefile] "/foss/designs/TinyTapeout_4Bit_CPU/sim/cpu_waveform.gtkw"
-[timestart] 3742810000
-[size] 1920 995
+[timestart] 118000000
+[size] 1536 875
 [pos] -27 -24
-*-21.299999 3749710000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-29.699999 284700000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -41,7 +41,7 @@
 [sst_width] 297
 [signals_width] 248
 [sst_expanded] 1
-[sst_vpaned_height] 614
+[sst_vpaned_height] 594
 @200
 -testbench
 @28
@@ -53,8 +53,6 @@ cpu_tb.in_pins_tb[3:0]
 cpu_tb.next_data_strb_tb
 cpu_tb.out_pins_tb[3:0]
 cpu_tb.data_valid_strb_tb
-cpu_tb.p_programm_tb
-cpu_tb.programm_o_tb
 cpu_tb.fetch_instr_tb
 cpu_tb.decode_tb
 cpu_tb.fetcho_op_tb
@@ -62,11 +60,9 @@ cpu_tb.fetch_mdr_tb
 cpu_tb.execute_tb
 @200
 -control unit
-@25
+@24
 [color] 3
 cpu_tb.dut.cu.stRESET
-[color] 3
-cpu_tb.dut.cu.stPROGRAMM
 [color] 3
 cpu_tb.dut.cu.stFETCH_I
 [color] 3
@@ -77,10 +73,7 @@ cpu_tb.dut.cu.stFETCH_O
 cpu_tb.dut.cu.stEXEC_ALU
 [color] 3
 cpu_tb.dut.cu.stEXEC
-@24
 cpu_tb.dut.cu.cu_state[2:0]
-@22
-cpu_tb.dut.cu.programm_counter[3:0]
 @28
 cpu_tb.dut.cu.c_flag
 cpu_tb.dut.cu.z_flag
@@ -187,6 +180,9 @@ cpu_tb.dut.rx.data_valid_strb_o
 cpu_tb.dut.memory.\reg_vals[0][3:0]
 cpu_tb.dut.memory.\reg_vals[1][3:0]
 cpu_tb.dut.memory.\reg_vals[2][3:0]
+@29
+cpu_tb.dut.memory.\reg_vals[3][3:0]
+@28
 cpu_tb.dut.memory.\reg_vals[4][3:0]
 cpu_tb.dut.memory.\reg_vals[5][3:0]
 cpu_tb.dut.memory.\reg_vals[6][3:0]

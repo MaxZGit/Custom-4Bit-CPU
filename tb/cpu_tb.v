@@ -15,7 +15,6 @@
 
 module cpu_tb;
     
-    
     // Instruction constants
     localparam NOP_INSTR = 4'b0000;
     localparam XOR_INSTR = 4'b0001;
@@ -33,6 +32,125 @@ module cpu_tb;
     localparam IN_INSTR = 4'b1101;
     localparam OUT_INSTR = 4'b1110;
     localparam LDI_INSTR = 4'b1111;
+
+    // ---------------------------------
+    // Test programs
+    // ---------------------------------
+
+    // _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._
+    // expected behaviour: 
+    // out_pins => 0001 -> 0010 -> 0100 -> 1000 -> 0001 ...
+    // _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._
+    localparam TEST_CIRC_LEFT_SHIFT = 0;
+    reg [63:0] circ_left_shift;  // holds 8 bytes (8 × 8 bits)
+    initial begin
+        circ_left_shift = {
+            IN_INSTR,          // A <- IN
+            OUT_INSTR,         // OUT <- A
+            ST_INSTR,  4'b1111,// MEM[15] <- A
+            ADD_INSTR, 4'b1111,// A <- A + MEM[15]
+            JC_INSTR,  4'b1010,// if carry: jump
+            JMP_INSTR, 4'b0001,// jump to OUT
+            INC_INSTR,         // A <- A + 1
+            JMP_INSTR, 4'b0001, // jump to OUT
+            NOP_INSTR,
+            NOP_INSTR,
+            4'b0001
+        };
+    end
+
+    // _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._
+    // expected behaviour:
+    // out_pins => 0000 -> 0001 -> 0010 -> 0011 -> 0100 -> ...
+    // _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._
+
+    localparam TEST_INC_COUNTER = 1;
+    reg [63:0] inc_counter;
+
+    initial begin
+        inc_counter = {
+            LDI_INSTR, 4'b0000,// A <- 0
+            OUT_INSTR,         // OUT <- A
+            INC_INSTR,         // A <- A + 1
+            JMP_INSTR, 4'b0001,// loop back to OUT
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR
+        };
+    end
+
+    // _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._
+    // expected behaviour:
+    // out_pins: 0000 -> 1111 -> 0000 -> 1111 ...
+    // _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._
+
+    localparam TEST_BLINK = 2;
+    reg [63:0] blink;
+
+    initial begin
+        blink = {
+            LDI_INSTR, 4'b0000, 
+            OUT_INSTR,          
+            LDI_INSTR, 4'b1111,
+            OUT_INSTR,
+            JMP_INSTR,  4'b0000
+
+        };
+    end
+
+    // _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._
+    // expected behaviour:
+    // out_pins => 1010 (value stored and reloaded from memory)
+    // tests ST and LD instructions
+    // _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._
+
+    localparam TEST_MEM_RW = 3;
+    reg [63:0] mem_rw_test;
+
+    initial begin
+        mem_rw_test = {
+            LDI_INSTR, 4'b1010,// A <- 10
+            ST_INSTR,  4'b0011,// MEM[3] <- A
+            LDI_INSTR, 4'b0000,// A <- 0
+            LD_INSTR,  4'b0011,// A <- MEM[3]
+            OUT_INSTR,         // OUT <- A
+            JMP_INSTR, 4'b0100,// loop at OUT
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR
+        };
+    end
+
+    
+    // _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._
+    // LED effect: input mirror
+    // expected behaviour: LEDs follow input
+    // _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._
+
+    localparam TEST_INPUT_ECHO = 4;
+    reg [63:0] input_echo;
+
+    initial begin
+        input_echo = {
+            IN_INSTR,           // A <- IN
+            OUT_INSTR,          // OUT <- A
+            JMP_INSTR, 4'b0000, // loop
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR,
+            NOP_INSTR
+        };
+    end
 
     localparam OPERATION_CODE_WIDTH = 3;
     localparam CRA_BIT_NUMB = 4;
@@ -69,6 +187,23 @@ module cpu_tb;
     wire fetcho_op_tb;
     wire fetch_mdr_tb;
     wire execute_tb;
+
+    // ------------------------------------------
+    // SELECT TEST PROGRAM
+    // ------------------------------------------
+
+    localparam SELECTED_TEST = TEST_INPUT_ECHO;
+    
+    always @(*) begin
+        case (SELECTED_TEST)
+            TEST_CIRC_LEFT_SHIFT: data_array = circ_left_shift;
+            TEST_INC_COUNTER:     data_array = inc_counter;
+            TEST_BLINK:             data_array = blink;
+            TEST_MEM_RW:          data_array = mem_rw_test;
+            TEST_INPUT_ECHO:          data_array = input_echo;
+            default:             data_array = 64'b0;
+        endcase
+    end
 
     cpu #(
         .CRA_BIT_NUMB(CRA_BIT_NUMB),
@@ -116,26 +251,6 @@ module cpu_tb;
             $dumpvars(1, dut.memory.reg_vals[i]); // dump each element separately
         end
 
-        data_array = {
-            IN_INSTR,
-            OUT_INSTR,
-            ST_INSTR,
-            4'b1111,
-            ADD_INSTR,
-            4'b1111,
-            JC_INSTR,
-            4'b1010,
-
-            JMP_INSTR,
-            4'b0001,
-            INC_INSTR,
-            JMP_INSTR,
-            4'b0001,
-            NOP_INSTR,
-            NOP_INSTR,
-            4'b0001
-        };
-
         reset_tb = 1'b1; // reset
         #(10*clk_pulse);
         reset_tb = 0; //release reset
@@ -144,7 +259,7 @@ module cpu_tb;
         #(1000*clk_pulse);
 
         p_program_tb = 1;
-        for (i = 7; i > 0; i = i - 1) begin
+        for (i = 7; i >= 0; i = i - 1) begin
             current_byte = data_array[i*8+: 8];
             //start bit
             rx_tb = 0;
@@ -159,6 +274,7 @@ module cpu_tb;
             rx_tb = 1;
             #wait_one_bit;
         end
+
         rx_tb = 1;
         #(5*clk_pulse);
         p_program_tb = 0;
