@@ -260,14 +260,14 @@ module control_unit #(
         endcase
     end
 
-    assign p_active_o = cu_state == stPROGRAMM;
-
     // ###########################################################
-    //               SET CONTROL SINGALS LOGIC
+    //               FSM active logic (and program counter logic)
     // ###########################################################
 
     always @(*) begin
         // default assignments
+        p_active_o = 0;
+
         next_programm_counter = programm_counter;
 
         read_en_mem_o = 0;
@@ -298,10 +298,11 @@ module control_unit #(
         if (cu_state == stFETCH_I || cu_state == stFETCH_O)
             next_programm_counter = programm_counter + 1;
 
-        // FSM behavior
+        // FSM behavior (action logic)
         case (cu_state)
             stPROGRAMM: begin
                 // connect boot loader to memory
+                p_active_o = 1;
                 write_en_mem_o = p_write_en_mem_i;
                 addr_mem_o = p_address_i;
                 write_data_mem_o = p_data_i;
@@ -441,6 +442,8 @@ module control_unit #(
             next_data_valid_strb = 1;
     end
 
+    assign next_data_strb_o = ((cu_state == stEXEC) && (in_instr == 1));
+
     // ###########################################################
     //                SEQUENTIAL LOGIC (REGISTER)
     // ###########################################################
@@ -471,6 +474,5 @@ module control_unit #(
     assign fetch_mdr_o = (cu_state == stFETCH_MDR);
     assign execute_o = ((cu_state == stEXEC) || (cu_state == stEXEC_ALU));
 
-    assign next_data_strb_o = ((cu_state == stEXEC) && (in_instr == 1));
     assign data_valid_strb_o = data_valid_strb;
 endmodule
