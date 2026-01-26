@@ -29,7 +29,8 @@ by 1. Also included is a bitwise AND, OR and XOR.
 5. **Programmer (including UART RX)**: The programmer can receive data via a UART interface (only RX)
 and can be used to program instruction codes into the memory.
 
-![[CPU_Architecture.png]]
+![CPU Architecture](CPU_Architecture.png)
+
 ### Instruction Set
 
 Following instructions are supported:
